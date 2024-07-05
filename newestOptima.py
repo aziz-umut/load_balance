@@ -30,11 +30,6 @@ m_average = average_calculator(m_cont)  # average memory usage of a container
 # print(m_average)
 
 
-# recursive_approximate function's aim is to give out a nested list in which the same number of containers are in each
-# node. the output should consist of lists of 0, 1, 2 (because whe have 3 nodes) which indicates first, second, or
-# third node.
-
-
 def inner_sum(lst_of_elements, lst_of_index, index):
     sum_out = 0
     for i in range(0, len(lst_of_index)):
@@ -59,6 +54,11 @@ def minimum_calculator(nested_list, usage):
         if temp_sum < temp_min:
             temp_min = temp_sum
     return temp_min
+
+
+# recursive_approximate function's aim is to give out a nested list in which the same number of containers are in each
+# node. the output should consist of lists of 0, 1, 2 (because whe have 3 nodes) which indicates first, second, or
+# third node.
 
 
 def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, out_list_nested, occurrence,is_itFirst=True):
@@ -124,7 +124,7 @@ occurrence_nested = []
 for i in range(0, n):
     occurrence_nested.append(0)
 nested_assignment_lst = recursive_approximate([1000, 1000, 0, 0], len(c_cont), len(c_cont), [], [], occurrence_nested, True)
-print(len(nested_assignment_lst))
+# print(len(nested_assignment_lst))
 
 
 def x_calculator(assignment_lst, i, j):
