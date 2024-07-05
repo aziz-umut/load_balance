@@ -1,6 +1,6 @@
-c_cont = [45,64,20,65,80,138,56,48,100,100,73,90,103,96,94,65,100]   # CPU usage of containers
+c_cont = [45,64,20,65,80,138,56,48,100,100,73,90,120,88,16]   # CPU usage of containers
 
-m_cont = [34,130,82,56,60,27,20,103,76,54,45,100,100,100,33,90,75]   # memory usage of containers,
+m_cont = [34,130,82,56,60,27,20,103,76,54,45,100,77,45,110]   # memory usage of containers,
 
 c_node = [5, 6, 7]  # CPU capacity of nodes
 
@@ -120,9 +120,11 @@ def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, o
 # print(recursive_permutation_calculator(5, [], [], True))
 # print(len(recursive_permutation_calculator(5, [], [], True)))
 
-
-nested_assignment_lst = recursive_approximate([1000, 1000, 0, 0], len(c_cont), len(c_cont), [], [], [0, 0, 0], True)
-# print(len(nested_assignment_lst))
+occurrence_nested = []
+for i in range(0, n):
+    occurrence_nested.append(0)
+nested_assignment_lst = recursive_approximate([1000, 1000, 0, 0], len(c_cont), len(c_cont), [], [], occurrence_nested, True)
+print(len(nested_assignment_lst))
 
 
 def x_calculator(assignment_lst, i, j):
