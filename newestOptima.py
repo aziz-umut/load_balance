@@ -2,17 +2,9 @@ c_cont = [45,64,20,65,80,138,56,48,100,100,73,90,120,88,16]   # CPU usage of con
 
 m_cont = [34,130,82,56,60,27,20,103,76,54,45,100,77,45,110]   # memory usage of containers,
 
-c_node = [5, 6, 7]  # CPU capacity of nodes
-
-m_node = [6, 8, 9]  # memory capacity of nodes
-
 n = 3  # number of nodes
 
 k = len(c_cont)  # number of containers
-
-sigma_c = 0  # standard deviation of CPU usage
-sigma_m = 0  # standard deviation of memory usage
-
 
 def average_calculator(listOfElements):  # calculates the average of the given list(listOfElements).
     summation = 0
@@ -123,7 +115,7 @@ def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, o
 occurrence_nested = []
 for i in range(0, n):
     occurrence_nested.append(0)
-nested_assignment_lst = recursive_approximate([1000, 1000, 0, 0], len(c_cont), len(c_cont), [], [], occurrence_nested, True)
+nested_assignment_lst = recursive_approximate([100000, 100000, 0, 0], len(c_cont), len(c_cont), [], [], occurrence_nested, True)
 # print(len(nested_assignment_lst))
 
 
