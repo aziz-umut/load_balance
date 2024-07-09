@@ -1,12 +1,14 @@
-c_cont = [45,64,20,65,80,138,56,48,100,100,73,90,120,88,16]   # CPU usage of containers
+c_cont = [9, 14, 3, 14, 9, 15, 6, 4, 10, 4, 8, 10, 8, 13, 10, 0, 8, 5]   # CPU usage of containers
 
-m_cont = [34,130,82,56,60,27,20,103,76,54,45,100,77,45,110]   # memory usage of containers,
+m_cont = [8, 10, 6, 12, 6, 8, 10, 6, 8, 5, 11, 3, 11, 5, 9, 10, 12, 6]   # memory usage of containers,
 
 n = 3  # number of nodes
 
 k = len(c_cont)  # number of containers
 
+
 def average_calculator(listOfElements):  # calculates the average of the given list(listOfElements).
+    """average_calculator calculates the average of the given list."""
     summation = 0
     for i in range(0, len(listOfElements)):
         summation += listOfElements[i]
@@ -18,11 +20,17 @@ c_average = average_calculator(c_cont)  # average CPU usage of a container
 
 m_average = average_calculator(m_cont)  # average memory usage of a container
 
-# print(c_average)
-# print(m_average)
+print(c_average)
+print(m_average)
+
+deneme = []
+for i in range(0, len(c_cont)):
+    deneme.append((c_cont[i] - c_average)**2 + (m_cont[i]- m_average)**2)
+# print(deneme)
 
 
 def inner_sum(lst_of_elements, lst_of_index, index):
+    """inner_sum calculates the total usage in one given node."""
     sum_out = 0
     for i in range(0, len(lst_of_index)):
         if lst_of_index[i] == index:
@@ -31,6 +39,9 @@ def inner_sum(lst_of_elements, lst_of_index, index):
 
 
 def maximum_calculator(nested_list, usage):
+    """maximum_calculator calculates the maximum usage in the last assigned possible assignment list. We assign the
+    lists in descending order of variation, so it basically calculates the maximum of the least-deviated possible usages
+    every time."""
     temp_max = 0
     for i in range(0, n):
         temp_sum = inner_sum(usage, nested_list[len(nested_list) - 1], i)
@@ -40,6 +51,9 @@ def maximum_calculator(nested_list, usage):
 
 
 def minimum_calculator(nested_list, usage):
+    """minimum_calculator calculates the minimum usage in the last assigned possible assignment list. We assign the
+    lists in descending order of variation, so it basically calculates the minimum of the least-deviated possible usages
+    every time."""
     temp_min = 1000
     for i in range(0, n):
         temp_sum = inner_sum(usage, nested_list[len(nested_list) - 1], i)
@@ -48,12 +62,12 @@ def minimum_calculator(nested_list, usage):
     return temp_min
 
 
-# recursive_approximate function's aim is to give out a nested list in which the same number of containers are in each
-# node. the output should consist of lists of 0, 1, 2 (because whe have 3 nodes) which indicates first, second, or
-# third node.
-
-
 def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, out_list_nested, occurrence,is_itFirst=True):
+    """recursive_approximate function's aim is to give out a nested list in which the same number of containers are in
+    each node. the output should consist of lists of 0, 1, 2 (because whe have 3 nodes) which indicates first, second,
+    or third node. Its output is a nested list that contains numbers which shows which container should be assigned to
+    which node."""
+
     if is_itFirst:  # this line is true only the first time of recursion and creates a list of zeros the same size as
         # given list.
         for i in range(0, initial_length):
@@ -62,18 +76,21 @@ def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, o
     if (lengthOfList == 0):
         temp_lst = []
         is_minus = False
-        for i in range(0, len(out_list)):
+        for i in range(0, len(out_list)):   # this is to check if the list has any -1 which means it has a node with
+            # too much deviation so that it is eliminated.
             if (out_list[i] == -1):
                 is_minus = True
                 break
             temp_lst.append(out_list[i])
         if (not is_minus):
             out_list_nested.append(temp_lst)
-            temp_upper_bound = maximum_calculator(out_list_nested, c_cont)
-            temp_upper_bound_2 = maximum_calculator(out_list_nested, m_cont)
-            temp_lower_bound = minimum_calculator(out_list_nested, c_cont)
-            temp_lower_bound_2 = minimum_calculator(out_list_nested, m_cont)
+            temp_upper_bound = maximum_calculator(out_list_nested, c_cont)  # maximum for CPU usage.
+            temp_upper_bound_2 = maximum_calculator(out_list_nested, m_cont)  # maximum for memory usage.
+            temp_lower_bound = minimum_calculator(out_list_nested, c_cont)  # minimum for CPU usage.
+            temp_lower_bound_2 = minimum_calculator(out_list_nested, m_cont)  # minimum for memory usage.
 
+            # this code dynamically checks and if necessary changes the bound. upper_bound's 0th and 1st elements are
+            # cpu and memory upper limit and 2nd and 3rd are cpu and memory lower limit respectively.
             if ((temp_upper_bound - c_average) ** 2 + (temp_upper_bound_2 - m_average) ** 2 < (
                     upper_bound[0] - c_average) ** 2 + (upper_bound[1] - m_average) ** 2):
                 upper_bound[0] = temp_upper_bound
@@ -88,6 +105,8 @@ def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, o
             # print(upper_bound[2])
             # print(upper_bound[3])
     else:
+        # this part of the code basically performs the recursion to find the possible distributions while also checks
+        # upper and lower limits.
         for j in range(0, n):
             if occurrence[j] < (initial_length / n):
                 out_list[lengthOfList - 1] = j
@@ -115,11 +134,13 @@ def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, o
 occurrence_nested = []
 for i in range(0, n):
     occurrence_nested.append(0)
-nested_assignment_lst = recursive_approximate([100000, 100000, 0, 0], len(c_cont), len(c_cont), [], [], occurrence_nested, True)
-# print(len(nested_assignment_lst))
+nested_assignment_lst = recursive_approximate([1000, 1000, 0, 0], len(c_cont), len(c_cont), [], [], occurrence_nested, True)
+print(len(nested_assignment_lst))
 
 
 def x_calculator(assignment_lst, i, j):
+    """x_calculator returns a value that is 1 if list's ith element is equal to j, otherwise it gives out zero. It
+     is like some type of Kronecker Delta function. """
     if assignment_lst[i] == j:
         return 1
     return 0
@@ -130,6 +151,8 @@ def x_calculator(assignment_lst, i, j):
 
 
 def summation_calculator(c_cont, m_cont, c_average, m_average, k, n, assignment_lst):
+    """summation_calculator basically computes the sum of variations, which is what we intended to minimize in the
+    first place. its output is a number which is the sum of the variations of nodes."""
     out_sum = 0
     for j in range(0, n):
         temp_sum_cpu = 0
@@ -149,6 +172,10 @@ def summation_calculator(c_cont, m_cont, c_average, m_average, k, n, assignment_
 
 
 def minima_calculator(nested_assignment_lst, c_cont, m_cont, c_average, m_average, k, n):
+    """minima_calculator calculates the sum of variations of every possible situation that has been determined by
+    recursive_approximate function. It then, by using summation_calculator, search for the minimum of those sums.
+    Once it finds the minimum, it returns a list which contains the information of which container should be which
+    node for the minimum deviation. It also appends this list the minimum value of that summation."""
     prev_minimum = summation_calculator(c_cont, m_cont, c_average, m_average, k, n, nested_assignment_lst[0])
     assigned_lst_min = nested_assignment_lst[0]
     for i in range(1, len(nested_assignment_lst)):
@@ -161,9 +188,9 @@ def minima_calculator(nested_assignment_lst, c_cont, m_cont, c_average, m_averag
 
 
 # final_minimum is a list that indicates which container should go to which node.
-
-
 final_minimum = minima_calculator(nested_assignment_lst, c_cont, m_cont, c_average, m_average, k, n)
+
+# this part is just printing out the assigned containers and their memory and CPU usages.
 for i in range(0, n):
     temp_sum_cpu = 0
     temp_sum_memory = 0
