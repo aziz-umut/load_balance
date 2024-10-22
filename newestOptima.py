@@ -1,6 +1,11 @@
-c_cont = [9, 14, 3, 14, 9, 15, 6, 4, 10, 4, 8, 10, 8, 13, 10, 0, 8, 5]   # CPU usage of containers
 
-m_cont = [8, 10, 6, 12, 6, 8, 10, 6, 8, 5, 11, 3, 11, 5, 9, 10, 12, 6]   # memory usage of containers,
+import time
+
+initial_time = time.time()
+
+c_cont = [13,24,7,18,20,21,19,24,16,11,17,24,13,16,13,7,17,12,15,21,9,23,18,23,20,21,17,11,11,19,17,4,20,23,24,12]   # CPU usage of containers
+
+m_cont = [23,23,24,7,23,22,24,7,20,25,12,17,21,19,24,16,11,24,9,18,22,20,24,16,18,23,20,21,17,23,13,21,17,11,21,19]   # memory usage of containers,
 
 n = 3  # number of nodes
 
@@ -23,10 +28,36 @@ m_average = average_calculator(m_cont)  # average memory usage of a container
 print(c_average)
 print(m_average)
 
-deneme = []
+variation = []
 for i in range(0, len(c_cont)):
-    deneme.append((c_cont[i] - c_average)**2 + (m_cont[i]- m_average)**2)
-# print(deneme)
+    variation.append(c_cont[i] + m_cont[i])
+
+c_cont_descent = c_cont.copy()
+m_cont_descent = m_cont.copy()
+for i in range(0, len(variation)):
+    for j in range(0, len(variation) - 1):
+        if variation[j] < variation[j + 1]:
+            temp_var = variation[j]
+            temp_cpu = c_cont_descent[j]
+            temp_memory = m_cont_descent[j]
+            variation[j] = variation[j + 1]
+            variation[j + 1] = temp_var
+            c_cont_descent[j] = c_cont_descent[j + 1]
+            c_cont_descent[j + 1] = temp_cpu
+            m_cont_descent[j] = m_cont_descent[j + 1]
+            m_cont_descent[j + 1] = temp_memory
+print(variation)
+for i in range(0, len(variation)):
+    if i % 2 == 0:
+        c_cont[i] = c_cont_descent[i // 2]
+        m_cont[i] = m_cont_descent[i // 2]
+    else:
+        c_cont[i] = c_cont_descent[len(c_cont_descent) - (i + 1) // 2]
+        m_cont[i] = m_cont_descent[len(m_cont_descent) - (i + 1) // 2]
+
+
+print(c_cont)
+print(m_cont)
 
 
 def inner_sum(lst_of_elements, lst_of_index, index):
@@ -71,18 +102,18 @@ def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, o
     if is_itFirst:  # this line is true only the first time of recursion and creates a list of zeros the same size as
         # given list.
         for i in range(0, initial_length):
-            out_list.append(-1)
+            out_list.append(-2)
             is_itFirst = False
-    if (lengthOfList == 0):
+    if lengthOfList == 0:
         temp_lst = []
         is_minus = False
-        for i in range(0, len(out_list)):   # this is to check if the list has any -1 which means it has a node with
+        for i in range(0, len(out_list)):  # this is to check if the list has any -1 which means it has a node with
             # too much deviation so that it is eliminated.
             if (out_list[i] == -1):
                 is_minus = True
                 break
             temp_lst.append(out_list[i])
-        if (not is_minus):
+        if not is_minus:
             out_list_nested.append(temp_lst)
             temp_upper_bound = maximum_calculator(out_list_nested, c_cont)  # maximum for CPU usage.
             temp_upper_bound_2 = maximum_calculator(out_list_nested, m_cont)  # maximum for memory usage.
@@ -116,14 +147,18 @@ def recursive_approximate(upper_bound, initial_length, lengthOfList, out_list, o
                                 upper_bound[3]):
                             out_list[lengthOfList - 1] = -1
                     new_occurrence = []
-                    for k in range(0, len(occurrence)):
-                        new_occurrence.append(occurrence[k])
-                    new_occurrence[len(occurrence) - n + j] = occurrence[len(occurrence) - n + j] + 1
-                    recursive_approximate(upper_bound, initial_length, lengthOfList - 1, out_list, out_list_nested,
-                                          new_occurrence, False)
+                    if out_list[lengthOfList - 1] == -1:
+                        return out_list_nested
+
+                    else:
+                        for k in range(0, len(occurrence)):
+                            new_occurrence.append(occurrence[k])
+                        new_occurrence[len(occurrence) - n + j] = occurrence[len(occurrence) - n + j] + 1
+                        recursive_approximate(upper_bound, initial_length, lengthOfList - 1, out_list, out_list_nested,
+                                              new_occurrence, False)
                 else:
                     out_list[lengthOfList - 1] = -1
-                    recursive_approximate(upper_bound, initial_length, 0, out_list, out_list_nested, occurrence, False)
+                    return out_list_nested
 
     return out_list_nested
 
@@ -136,6 +171,10 @@ for i in range(0, n):
     occurrence_nested.append(0)
 nested_assignment_lst = recursive_approximate([1000, 1000, 0, 0], len(c_cont), len(c_cont), [], [], occurrence_nested, True)
 print(len(nested_assignment_lst))
+for i in range(0, len(nested_assignment_lst)):
+    for j in range(0, len(nested_assignment_lst[i])):
+        if(nested_assignment_lst[i][j] == -1):
+            print(nested_assignment_lst[i])
 
 
 def x_calculator(assignment_lst, i, j):
@@ -203,3 +242,7 @@ for i in range(0, n):
 
 for i in range(0, len(final_minimum) - 1):
     print("container " + str(i + 1) + " should be assigned to node: " + str(final_minimum[i] + 1))
+
+now = time.time()
+
+print(now - initial_time)
